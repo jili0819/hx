@@ -6,7 +6,7 @@ import (
 	"github.com/guonaihong/gout"
 	"github.com/jili0819/hx/base"
 	"github.com/panjf2000/ants/v2"
-	"runtime"
+	"os"
 	"sync"
 	"time"
 )
@@ -16,9 +16,11 @@ var (
 )
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
-	return
+	path, _ := os.Getwd()
+	fmt.Println(path + "/tmp/hx/imageCode/")
 	fmt.Println(time.Now())
+	return
+
 	// base 初始化要抢科室信息
 	// 1、获取指定科室，指定日期的所有可预约医生
 	// 2、生成验证码

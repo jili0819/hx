@@ -165,9 +165,15 @@ type (
 	}
 )
 
-// DoctorList 获取预约当天医生排班
-func (c *Client) DoctorList(doctorListReq DoctorListReq) (doctorListResp DoctorListResp, err error) {
-	header := c.GenerateHeader()
+// HxDoctorList 获取预约当天医生排班
+func (c *Client) HxDoctorList(
+	idCard string,
+	doctorListReq DoctorListReq,
+) (
+	doctorListResp DoctorListResp,
+	err error,
+) {
+	header := c.GenerateHeader(idCard)
 	req := gout.H{
 		"appCode":          doctorListReq.AppCode,
 		"organCode":        doctorListReq.OrganCode,
@@ -188,7 +194,7 @@ func (c *Client) DoctorList(doctorListReq DoctorListReq) (doctorListResp DoctorL
 	}
 	doctorListResp = DoctorListResp{}
 	if err = gout.POST(base.HytHost + base.HytDoctorList).
-		Debug(c.config.Debug).
+		Debug(c.Config().Debug).
 		SetHeader(header).
 		SetJSON(req).
 		BindJSON(&doctorListResp).
@@ -202,9 +208,15 @@ func (c *Client) DoctorList(doctorListReq DoctorListReq) (doctorListResp DoctorL
 	return
 }
 
-// DoctorDetail 获取医生的所有排班
-func (c *Client) DoctorDetail(doctorDetailReq DoctorDetailReq) (doctorDetailResp DoctorDetailResp, err error) {
-	header := c.GenerateHeader()
+// HxDoctorDetail 获取医生的所有排班
+func (c *Client) HxDoctorDetail(
+	idCard string,
+	doctorDetailReq DoctorDetailReq,
+) (
+	doctorDetailResp DoctorDetailResp,
+	err error,
+) {
+	header := c.GenerateHeader(idCard)
 	req := gout.H{
 		"appCode":          doctorDetailReq.AppCode,
 		"organCode":        doctorDetailReq.OrganCode,
@@ -219,7 +231,7 @@ func (c *Client) DoctorDetail(doctorDetailReq DoctorDetailReq) (doctorDetailResp
 	}
 	doctorDetailResp = DoctorDetailResp{}
 	if err = gout.POST(base.HytHost + base.HytDoctorDetail).
-		Debug(c.config.Debug).
+		Debug(c.Config().Debug).
 		SetHeader(header).
 		SetJSON(req).
 		BindJSON(&doctorDetailResp).

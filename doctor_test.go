@@ -17,9 +17,9 @@ func TestClient_DoctorList(t *testing.T) {
 		HospitalAreaCode: "HID0101",
 		HospitalCode:     "HID0101",
 		KeyWordEnumType:  0,
-		ScheduleDate:     "2022-08-05",
+		ScheduleDate:     "2022-08-10",
 	}
-	doctorListResp, err := client.DoctorList(doctorListRep)
+	doctorListResp, err := client.HxDoctorList(idCard, doctorListRep)
 	if err != nil {
 		t.Error(err)
 		return
@@ -33,14 +33,14 @@ func TestClient_DoctorDetail(t *testing.T) {
 		OrganCode:        base.OrganCode,
 		ChannelCode:      "PATIENT_WECHAT",
 		AppointmentType:  1,
-		DeptCode:         "331",
+		DeptCode:         "1294",
 		DeptCategoryCode: "7400-ZLXB",
-		DoctorId:         "2c9480827028f503017074da72f54a35",
+		DoctorId:         "2c968082698199bf016a9ba6a00b43fe",
 		HospitalAreaCode: "HID0101",
 		HospitalCode:     "HID0101",
 		TabAreaCode:      "HID0101",
 	}
-	doctorDetailResp, err := client.DoctorDetail(doctorDetailRep)
+	doctorDetailResp, err := client.HxDoctorDetail(idCard, doctorDetailRep)
 	if err != nil {
 		t.Error(err)
 		return
