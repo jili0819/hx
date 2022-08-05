@@ -20,6 +20,8 @@ type (
 	}
 	Config struct {
 		AppCode        string `json:"appCode"`
+		OrganCode      string `json:"organCode"`
+		ChannelCode    string `json:"channelCode"`
 		Debug          bool   `json:"debug"`
 		ImageCachePath string `json:"imageCachePath"`
 	}

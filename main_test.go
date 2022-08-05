@@ -15,13 +15,15 @@ func TestMain(m *testing.M) {
 
 	codeUrl, _ := os.Getwd()
 	config := &Config{
+		AppCode:        "HXGYAPP",
+		OrganCode:      "HID0101",
 		Debug:          true,
 		ImageCachePath: codeUrl,
 	}
 	client = NewClient(config)
 	client.AddCustomer(&CustomerInfo{
 		Token:       token,
-		OrganCode:   "HID0101",
+		OrganCode:   client.Config().OrganCode,
 		ChannelCode: "PATIENT_WECHAT",
 		IDCard:      idCard,
 	})
