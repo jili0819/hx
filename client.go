@@ -1,4 +1,4 @@
-package main
+package hx
 
 import (
 	"github.com/guonaihong/gout"

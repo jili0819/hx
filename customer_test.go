@@ -1,4 +1,4 @@
-package main
+package hx
 
 import (
 	"github.com/jili0819/hx/base"
