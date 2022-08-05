@@ -52,13 +52,14 @@ type IClient interface {
 //  @param config
 //  @return IClient
 //
-func NewClient(config *Config) IClient {
+func NewClient(config *Config) *Client {
 	if defaultClient == nil {
 		return &Client{
-			config:    config,
-			Customers: make(map[string]*CustomerInfo),
-			Caches:    make(map[string]map[string]ImageCode),
-			Hospitals: make(map[string]Hospital),
+			config:        config,
+			Customers:     make(map[string]*CustomerInfo),
+			Caches:        make(map[string]map[string]ImageCode),
+			Hospitals:     make(map[string]Hospital),
+			HospitalAreas: make(map[string][]DeptCategory),
 		}
 	}
 	return defaultClient
@@ -109,7 +110,7 @@ func (c *Client) GenerateHeader(idCard string) (header interface{}) {
 //  @param idCard
 //  @return *CustomerInfo
 //
-func (c *Client) Customer(idCard string) ICustomer {
+func (c *Client) Customer(idCard string) *CustomerInfo {
 	c.Lk.RLock()
 	defer c.Lk.RUnlock()
 	if _, ok := c.Customers[idCard]; ok {
