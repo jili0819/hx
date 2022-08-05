@@ -147,13 +147,13 @@ func (c *Client) HxInitDept(
 //  @param hospitals
 //
 func addHospitals(
-	c IClient,
+	c *Client,
 	hospitals []Hospital,
 ) {
-	c.Client().Lk.Lock()
-	defer c.Client().Lk.Unlock()
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
 	for _, value := range hospitals {
-		c.Client().Hospitals[value.HospitalAreaCode] = value
+		c.Hospitals[value.HospitalAreaCode] = value
 	}
 }
 
@@ -161,11 +161,11 @@ func addHospitals(
 //  @Description: 添加院区科室
 //
 func addDeparts(
-	c IClient,
+	c *Client,
 	hospitalAreaCode string,
 	departs []DeptCategory,
 ) {
-	c.Client().Lk.Lock()
-	defer c.Client().Lk.Unlock()
-	c.Client().HospitalAreas[hospitalAreaCode] = departs
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	c.HospitalAreas[hospitalAreaCode] = departs
 }

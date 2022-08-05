@@ -65,16 +65,16 @@ type (
 )
 
 type ICustomer interface {
-	HxGetCard(IClient, CardReq) (CardResp, error)
-	HxCardList(IClient) []Card
-	HxGetToken(IClient) string
-	HxUpdateToken(IClient, string)
-	HxGenerateImageCode(IClient, ImageCodeReq) error
-	HxGetImageCodeRand(c IClient) (ImageCode, error)
+	HxGetCard(*Client, CardReq) (CardResp, error)
+	HxCardList(*Client) []Card
+	HxGetToken(*Client) string
+	HxUpdateToken(*Client, string)
+	HxGenerateImageCode(*Client, ImageCodeReq) error
+	HxGetImageCodeRand(c *Client) (ImageCode, error)
 }
 
 func (customer *CustomerInfo) HxGetCard(
-	c IClient,
+	c *Client,
 	cardReq CardReq,
 ) (
 	cardResp CardResp,
@@ -104,14 +104,14 @@ func (customer *CustomerInfo) HxGetCard(
 }
 
 func (customer *CustomerInfo) HxCardList(
-	c IClient,
+	c *Client,
 ) (
 	cards []Card,
 ) {
-	c.Client().Lk.RLock()
-	defer c.Client().Lk.RUnlock()
-	if _, ok := c.Client().Customers[customer.IDCard]; ok {
-		tempCustomer := c.Client().Customers[customer.IDCard]
+	c.Lk.RLock()
+	defer c.Lk.RUnlock()
+	if _, ok := c.Customers[customer.IDCard]; ok {
+		tempCustomer := c.Customers[customer.IDCard]
 		return tempCustomer.Cards
 	}
 	return nil
@@ -124,11 +124,11 @@ func (customer *CustomerInfo) HxCardList(
 //  @return string
 //
 func (customer *CustomerInfo) HxGetToken(
-	c IClient,
+	c *Client,
 ) string {
-	c.Client().Lk.RLock()
-	defer c.Client().Lk.RUnlock()
-	return c.Client().Customers[customer.IDCard].Token
+	c.Lk.RLock()
+	defer c.Lk.RUnlock()
+	return c.Customers[customer.IDCard].Token
 }
 
 //
@@ -140,15 +140,14 @@ func (customer *CustomerInfo) HxGetToken(
 //  @param token
 //
 func (customer *CustomerInfo) HxUpdateToken(
-	c IClient,
+	c *Client,
 	token string,
 ) {
-	client := c.Client()
-	client.Lk.Lock()
-	defer client.Lk.Unlock()
-	temp := client.Customers[customer.IDCard]
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	temp := c.Customers[customer.IDCard]
 	temp.Token = token
-	client.Customers[customer.IDCard] = temp
+	c.Customers[customer.IDCard] = temp
 }
 
 //
@@ -162,10 +161,10 @@ func (customer *CustomerInfo) HxUpdateToken(
 //  @return err
 //
 func (customer *CustomerInfo) HxGenerateImageCode(
-	c IClient,
+	c *Client,
 	imageCodeReq ImageCodeReq,
 ) (err error) {
-	header := c.Client().GenerateHeader(customer.IDCard)
+	header := c.GenerateHeader(customer.IDCard)
 	req := gout.H{
 		"appCode":     imageCodeReq.AppCode,
 		"organCode":   imageCodeReq.OrganCode,
@@ -206,47 +205,46 @@ func (customer *CustomerInfo) HxGenerateImageCode(
 //  @return err
 //
 func (customer *CustomerInfo) HxGetImageCodeRand(
-	c IClient,
+	c *Client,
 ) (
 	imageCode ImageCode,
 	err error,
 ) {
-	client := c.Client()
-	client.Lk.RLock()
-	defer client.Lk.RUnlock()
-	if _, ok := client.Caches[customer.IDCard]; !ok {
+	c.Lk.RLock()
+	defer c.Lk.RUnlock()
+	if _, ok := c.Caches[customer.IDCard]; !ok {
 		// 还未给就诊人生成验证码
-		if err = customer.HxGenerateImageCode(client, ImageCodeReq{
-			AppCode: client.Config().AppCode,
-			//OrganCode:   c.GetClient().Config.,
+		if err = customer.HxGenerateImageCode(c, ImageCodeReq{
+			AppCode:     c.Config().AppCode,
+			OrganCode:   c.Config().OrganCode,
 			ChannelCode: "PATIENT_WECHAT",
 			Type:        "WEB",
 		}); err != nil {
 			return
 		}
-		if imageCode, err = customer.HxGetImageCodeRand(client); err != nil {
+		if imageCode, err = customer.HxGetImageCodeRand(c); err != nil {
 			return
 		}
-	} else if len(client.Caches[customer.IDCard]) == 0 {
+	} else if len(c.Caches[customer.IDCard]) == 0 {
 		// 就诊人验证码使用完了
-		if err = customer.HxGenerateImageCode(client, ImageCodeReq{
-			AppCode: client.Config().AppCode,
+		if err = customer.HxGenerateImageCode(c, ImageCodeReq{
+			AppCode: c.Config().AppCode,
 			//OrganCode:   c.GetClient().Config.,
 			ChannelCode: "PATIENT_WECHAT",
 			Type:        "WEB",
 		}); err != nil {
 			return
 		}
-		if imageCode, err = customer.HxGetImageCodeRand(client); err != nil {
+		if imageCode, err = customer.HxGetImageCodeRand(c); err != nil {
 			return
 		}
 	} else {
-		for _, value := range client.Caches[customer.IDCard] {
+		for _, value := range c.Caches[customer.IDCard] {
 			imageCode = value
 			if err = os.Remove(value.ImageUrl); err != nil {
 				return
 			}
-			delete(client.Caches[customer.IDCard], value.BizSeq)
+			delete(c.Caches[customer.IDCard], value.BizSeq)
 			break
 		}
 	}
@@ -260,11 +258,11 @@ func (customer *CustomerInfo) HxGetImageCodeRand(
 //  @param idCard
 //  @param code
 //
-func setImageCodeCache(c IClient, idCard string, code ImageCode) {
-	c.Client().Lk.Lock()
-	defer c.Client().Lk.Unlock()
-	if _, ok := c.Client().Caches[idCard]; !ok {
-		c.Client().Caches[idCard] = make(map[string]ImageCode)
+func setImageCodeCache(c *Client, idCard string, code ImageCode) {
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	if _, ok := c.Caches[idCard]; !ok {
+		c.Caches[idCard] = make(map[string]ImageCode)
 	}
-	c.Client().Caches[idCard][code.BizSeq] = code
+	c.Caches[idCard][code.BizSeq] = code
 }

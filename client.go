@@ -29,9 +29,8 @@ type (
 
 // IClient in(内部接口) out(调用外部接口)
 type IClient interface {
-	Client() *Client
 	Config() *Config
-	Customer(string) ICustomer
+	Customer(string) *CustomerInfo
 	AddCustomer(*CustomerInfo)
 	// GenerateHeader in 生成就诊人header
 	GenerateHeader(token string) interface{}
@@ -73,16 +72,6 @@ func NewClient(config *Config) *Client {
 //
 func (c *Client) Config() *Config {
 	return c.config
-}
-
-//
-// Client
-//  @Description:
-//  @receiver c
-//  @return *Client
-//
-func (c *Client) Client() *Client {
-	return defaultClient
 }
 
 //

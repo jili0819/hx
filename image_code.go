@@ -32,40 +32,40 @@ type (
 	}
 
 	IImageCache interface {
-		HxDelImageCode(IClient, string, ...string) error
-		HxUpdateImageCodeCheck(IClient, string, string, string)
+		HxDelImageCode(*Client, string, ...string) error
+		HxUpdateImageCodeCheck(*Client, string, string, string)
 	}
 )
 
 // HxDelImageCode 删除验证码
-func (i ImageCode) HxDelImageCode(
-	c IClient,
+func (i *ImageCode) HxDelImageCode(
+	c *Client,
 	idCard string,
 	bizSecs ...string,
 ) (err error) {
-	c.Client().Lk.Lock()
-	defer c.Client().Lk.Unlock()
-	if _, ok := c.Client().Caches[idCard]; !ok {
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	if _, ok := c.Caches[idCard]; !ok {
 		return
 	}
 
 	if len(bizSecs) == 0 {
 		// 清空
-		for index, value := range c.Client().Caches[idCard] {
+		for index, value := range c.Caches[idCard] {
 			if err = os.Remove(value.ImageUrl); err != nil {
 				return
 			}
-			delete(c.Client().Caches[idCard], index)
+			delete(c.Caches[idCard], index)
 		}
-		delete(c.Client().Caches, idCard)
+		delete(c.Caches, idCard)
 	} else {
 		for _, bizSeq := range bizSecs {
-			if _, ok := c.Client().Caches[idCard][bizSeq]; ok {
-				tempCode := c.Client().Caches[idCard][bizSeq]
+			if _, ok := c.Caches[idCard][bizSeq]; ok {
+				tempCode := c.Caches[idCard][bizSeq]
 				if err = os.Remove(tempCode.ImageUrl); err != nil {
 					return
 				}
-				delete(c.Client().Caches[idCard], bizSeq)
+				delete(c.Caches[idCard], bizSeq)
 			}
 		}
 	}
@@ -73,17 +73,19 @@ func (i ImageCode) HxDelImageCode(
 }
 
 // HxUpdateImageCodeCheck 设置验证码校验数字
-func (i ImageCode) HxUpdateImageCodeCheck(c IClient, idCard, bizSeq, check string) {
-	client := c.Client()
-	client.Lk.Lock()
-	defer client.Lk.Unlock()
-	if _, ok := client.Caches[idCard]; !ok {
+func (i *ImageCode) HxUpdateImageCodeCheck(
+	c *Client,
+	idCard, bizSeq, check string,
+) {
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	if _, ok := c.Caches[idCard]; !ok {
 		return
 	}
-	if _, ok := client.Caches[idCard][bizSeq]; !ok {
+	if _, ok := c.Caches[idCard][bizSeq]; !ok {
 		return
 	}
-	tempCode := client.Caches[idCard][bizSeq]
+	tempCode := c.Caches[idCard][bizSeq]
 	tempCode.CheckNum = check
-	client.Caches[idCard][bizSeq] = tempCode
+	c.Caches[idCard][bizSeq] = tempCode
 }
