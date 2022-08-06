@@ -12,6 +12,7 @@ type (
 		Cards  []Card // 就诊卡列表
 		Token  string `json:"token"`  // token
 		IDCard string `json:"idCard"` // 身份证号码
+		Name   string `json:"name"`   // 姓名
 	}
 	CardReq struct {
 		AppCode     string `json:"appCode"`
