@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/guonaihong/gout"
 	"github.com/jili0819/hx/base"
+	"strings"
 )
 
 type (
@@ -156,6 +157,9 @@ func addHospitals(
 	c.Lk.Lock()
 	defer c.Lk.Unlock()
 	for _, value := range hospitals {
+		if strings.Compare(value.HospitalAreaCode, "ALL") == 0 {
+			continue
+		}
 		c.Hospitals[value.HospitalAreaCode] = value
 	}
 }
