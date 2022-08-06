@@ -13,6 +13,7 @@ type (
 		OrganCode       string `json:"organCode"`
 		ChannelCode     string `json:"channelCode"`
 		HospitalCode    string `json:"hospitalCode"` // 医院code，非院区
+		HospitalArea    string `json:"hospital_area"`
 		AppointmentType int    `json:"appointmentType"`
 	}
 	// HospitalResp response
@@ -73,11 +74,13 @@ func (c *Client) HxInitHospitalAreaRecord(
 	err error,
 ) {
 	header := c.GenerateHeader(key)
+
 	req := gout.H{
 		"appCode":         hospitalReq.AppCode,
 		"organCode":       hospitalReq.OrganCode,
 		"channelCode":     hospitalReq.ChannelCode,
 		"hospitalCode":    hospitalReq.HospitalCode,
+		"hospitalArea":    hospitalReq.HospitalArea,
 		"appointmentType": hospitalReq.AppointmentType,
 	}
 	resp := HospitalResp{}
