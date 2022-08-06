@@ -123,7 +123,7 @@ func (c *Client) HxInitDept(
 		"hospitalCode":    deptReq.HospitalCode, // 医院code
 	}
 	resp := DeptResp{}
-	if err = gout.POST(base.HxHost + base.HytDept).
+	if err = gout.POST(base.HytHost + base.HytDept).
 		Debug(c.config.Debug).
 		SetHeader(header).
 		SetJSON(req).
