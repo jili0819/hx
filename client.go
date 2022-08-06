@@ -90,7 +90,7 @@ func (c *Client) GenerateHeader(idCard string) (header interface{}) {
 	// 如果requestedWith为null，则为同步请求。
 	// 如果requestedWith为XMLHttpRequest则为Ajax请求。
 	// com.tencent.mm 微信请求防止被拦截
-	return gout.H{"Token": c.Customers[idCard].Token, "accessToken": c.Customers[idCard].Token, "X-Requested-With": "com.tencent.mm"}
+	return gout.H{"token": c.Customers[idCard].Token, "accessToken": c.Customers[idCard].Token, "X-Requested-With": "com.tencent.mm"}
 }
 
 //

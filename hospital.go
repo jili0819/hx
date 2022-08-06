@@ -81,11 +81,10 @@ func (c *Client) HxInitHospitalAreaRecord(
 		"organCode":       hospitalReq.OrganCode,
 		"channelCode":     hospitalReq.ChannelCode,
 		"hospitalCode":    hospitalReq.HospitalCode,
-		"hospitalArea":    hospitalReq.HospitalArea,
 		"appointmentType": hospitalReq.AppointmentType,
 	}
 	resp := HospitalResp{}
-	if err = gout.POST(base.HxHost + base.HytHospitalArea).
+	if err = gout.POST(base.HytHost + base.HytHospitalArea).
 		Debug(c.config.Debug).
 		SetHeader(header).
 		SetJSON(req).

@@ -15,7 +15,7 @@ func TestClient_InitDept(t *testing.T) {
 	}); err != nil {
 		t.Error(err)
 	}
-	t.Log(client.Client().Hospitals)
+	t.Log(client.Hospitals)
 }
 
 func TestClient_InitHospitalAreaRecord(t *testing.T) {
@@ -28,5 +28,5 @@ func TestClient_InitHospitalAreaRecord(t *testing.T) {
 	}); err != nil {
 		t.Error(err)
 	}
-	t.Log(client.Client().Hospitals)
+	t.Log(client.Hospitals)
 }
