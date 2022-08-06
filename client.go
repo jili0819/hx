@@ -32,6 +32,7 @@ type IClient interface {
 	Config() *Config
 	Customer(string) *CustomerInfo
 	AddCustomer(*CustomerInfo)
+	DelCustomer(string)
 	// GenerateHeader in 生成就诊人header
 	GenerateHeader(token string) interface{}
 
@@ -122,4 +123,19 @@ func (c *Client) AddCustomer(
 	defer c.Lk.Unlock()
 	c.Customers[info.IDCard] = info
 	return
+}
+
+//
+// DelCustomer
+//  @Description:删除就诊人
+//  @receiver customer
+//  @param c
+//  @param info
+//
+func (c *Client) DelCustomer(
+	idCard string,
+) {
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	delete(c.Customers, idCard)
 }
