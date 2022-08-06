@@ -9,11 +9,9 @@ import (
 
 type (
 	CustomerInfo struct {
-		Cards       []Card // 就诊卡列表
-		Token       string `json:"token"`       // token
-		OrganCode   string `json:"organCode"`   // 医院code
-		ChannelCode string `json:"channelCode"` // 默认值
-		IDCard      string `json:"idCard"`      // 身份证号码
+		Cards  []Card // 就诊卡列表
+		Token  string `json:"token"`  // token
+		IDCard string `json:"idCard"` // 身份证号码
 	}
 	CardReq struct {
 		AppCode     string `json:"appCode"`
