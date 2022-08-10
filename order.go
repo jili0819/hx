@@ -1,13 +1,8 @@
 package hx
 
 type (
-	OrderListReq struct {
-	}
-	OrderListResp struct {
-	}
 	Order struct {
 	}
-
 	OrderCreateReq struct {
 		AppCode          string `json:"appCode"`
 		OrganCode        string `json:"organCode"`
@@ -20,7 +15,20 @@ type (
 		Type             string `json:"type"`
 		ImageId          string `json:"imageId"`
 	}
-	// OrderRefundReq 取消订单
+	OrderListReq struct {
+	}
+	OrderListResp struct {
+	}
 	OrderRefundReq struct {
 	}
+	OrderRefundResp struct {
+	}
 )
+
+func (c *Client) HxRob(req OrderCreateReq) {
+
+}
+
+func (c *Client) HxRefund() {
+
+}

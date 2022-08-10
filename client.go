@@ -42,7 +42,6 @@ type IClient interface {
 	HxInitDept(string, DeptReq) error
 
 	HxDoctorList(idCard string, doctorListReq DoctorListReq) (doctorListResp DoctorListResp, err error)
-
 	HxDoctorDetail(idCard string, doctorDetailReq DoctorDetailReq) (doctorDetailResp DoctorDetailResp, err error)
 }
 

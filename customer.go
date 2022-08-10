@@ -71,6 +71,8 @@ type ICustomer interface {
 	HxGenerateImageCode(*Client, ImageCodeReq) (ImageCode, error)
 	HxSetImageCodeImageUrl(*Client, string, string, string)
 	HxGetImageCodeRand(c *Client) (ImageCode, error)
+	hxRob(OrderCreateReq) (Order, error)
+	HxRefund(OrderRefundReq) error
 }
 
 func (customer *CustomerInfo) HxGetCard(

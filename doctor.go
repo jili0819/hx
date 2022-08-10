@@ -167,13 +167,13 @@ type (
 
 // HxDoctorList 获取预约当天医生排班
 func (c *Client) HxDoctorList(
-	idCard string,
+	key string,
 	doctorListReq DoctorListReq,
 ) (
 	doctorListResp DoctorListResp,
 	err error,
 ) {
-	header := c.GenerateHeader(idCard)
+	header := c.GenerateHeader(key)
 	req := gout.H{
 		"appCode":          doctorListReq.AppCode,
 		"organCode":        doctorListReq.OrganCode,
@@ -210,13 +210,13 @@ func (c *Client) HxDoctorList(
 
 // HxDoctorDetail 获取医生的所有排班
 func (c *Client) HxDoctorDetail(
-	idCard string,
+	key string,
 	doctorDetailReq DoctorDetailReq,
 ) (
 	doctorDetailResp DoctorDetailResp,
 	err error,
 ) {
-	header := c.GenerateHeader(idCard)
+	header := c.GenerateHeader(key)
 	req := gout.H{
 		"appCode":          doctorDetailReq.AppCode,
 		"organCode":        doctorDetailReq.OrganCode,
