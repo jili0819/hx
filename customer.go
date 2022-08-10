@@ -68,7 +68,8 @@ type ICustomer interface {
 	HxCardList(*Client) []Card
 	HxGetToken(*Client) string
 	HxUpdateToken(*Client, string)
-	HxGenerateImageCode(*Client, ImageCodeReq) error
+	HxGenerateImageCode(*Client, ImageCodeReq) (ImageCode, error)
+	HxSetImageCodeImageUrl(*Client, string, string, string)
 	HxGetImageCodeRand(c *Client) (ImageCode, error)
 }
 
@@ -162,7 +163,10 @@ func (customer *CustomerInfo) HxUpdateToken(
 func (customer *CustomerInfo) HxGenerateImageCode(
 	c *Client,
 	imageCodeReq ImageCodeReq,
-) (err error) {
+) (
+	code ImageCode,
+	err error,
+) {
 	header := c.GenerateHeader(customer.IDCard)
 	req := gout.H{
 		"appCode":     imageCodeReq.AppCode,
@@ -183,17 +187,27 @@ func (customer *CustomerInfo) HxGenerateImageCode(
 		err = fmt.Errorf("url:%s,code:%s,errCode:%s,msg:%s", base.HxHost+base.HxImageCodeUrl, imageCodeResp.Code, imageCodeResp.ErrCode, imageCodeResp.Msg)
 		return
 	}
-	// 生成验证码图片，并保存
-	// todo
-	url := "url"
-	code := ImageCode{
+	code = ImageCode{
 		CardNo:    "",
 		BizSeq:    imageCodeResp.Data.BizSeq,
 		ImageData: imageCodeResp.Data.ImageData,
-		ImageUrl:  url,
 	}
 	setImageCodeCache(c, customer.IDCard, code)
 	return
+}
+
+func (customer *CustomerInfo) HxSetImageCodeImageUrl(
+	c *Client,
+	idCard, bizSeq string,
+	url string,
+) {
+	c.Lk.Lock()
+	defer c.Lk.Unlock()
+	if _, ok := c.Caches[idCard][bizSeq]; ok {
+		code := c.Caches[idCard][bizSeq]
+		code.ImageUrl = url
+		c.Caches[idCard][bizSeq] = code
+	}
 }
 
 //
@@ -213,7 +227,7 @@ func (customer *CustomerInfo) HxGetImageCodeRand(
 	defer c.Lk.RUnlock()
 	if _, ok := c.Caches[customer.IDCard]; !ok {
 		// 还未给就诊人生成验证码
-		if err = customer.HxGenerateImageCode(c, ImageCodeReq{
+		if _, err = customer.HxGenerateImageCode(c, ImageCodeReq{
 			AppCode:     c.Config().AppCode,
 			OrganCode:   c.Config().OrganCode,
 			ChannelCode: "PATIENT_WECHAT",
@@ -226,7 +240,7 @@ func (customer *CustomerInfo) HxGetImageCodeRand(
 		}
 	} else if len(c.Caches[customer.IDCard]) == 0 {
 		// 就诊人验证码使用完了
-		if err = customer.HxGenerateImageCode(c, ImageCodeReq{
+		if _, err = customer.HxGenerateImageCode(c, ImageCodeReq{
 			AppCode: c.Config().AppCode,
 			//OrganCode:   c.GetClient().Config.,
 			ChannelCode: "PATIENT_WECHAT",
